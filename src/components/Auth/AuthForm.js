@@ -26,37 +26,50 @@ const AuthForm = () => {
 
     setIsLoading(true);
 
-    if (isLogin) {
-    } else {
-      const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`;
+    let url;
 
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: enteredEmail,
-          password: enteredPassword,
-          returnSecureToken: true,
-        }),
-      }).then((res) => {
+    if (isLogin) {
+      url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
+    } else {
+      url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`;
+    }
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: enteredEmail,
+        password: enteredPassword,
+        returnSecureToken: true,
+      }),
+    })
+      .then((res) => {
         setIsLoading(false);
 
         if (res.ok) {
+          return res.json();
         } else {
-          res.json().then((data) => {
+          return res.json().then((data) => {
             let errorMessage = "Authentication failed";
 
             if (data && data.error && data.error.message) {
               errorMessage = data.error.message;
             }
 
-            alert(errorMessage);
+            throw new Error(errorMessage);
           });
         }
+      })
+      .then((data) => {
+
+        console.log(data)
+
+      })
+      .catch((err) => {
+        alert(err);
       });
-    }
   };
 
   return (
@@ -72,7 +85,9 @@ const AuthForm = () => {
           <input type="password" id="password" ref={password} required />
         </div>
         <div className={classes.actions}>
-          {!isLoading && <button>{isLogin ? "Login" : "Create Account"}</button>}
+          {!isLoading && (
+            <button>{isLogin ? "Login" : "Create Account"}</button>
+          )}
           {isLoading && <p>Sendind request...</p>}
           <button
             type="button"
