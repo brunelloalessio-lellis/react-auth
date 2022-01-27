@@ -7,6 +7,7 @@ const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const email = useRef();
   const password = useRef();
+  const [isLoading, setIsLoading] = useState(false);
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -23,6 +24,8 @@ const AuthForm = () => {
       return;
     }
 
+    setIsLoading(true);
+
     if (isLogin) {
     } else {
       const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`;
@@ -38,6 +41,8 @@ const AuthForm = () => {
           returnSecureToken: true,
         }),
       }).then((res) => {
+        setIsLoading(false);
+
         if (res.ok) {
         } else {
           res.json().then((data) => {
@@ -46,9 +51,8 @@ const AuthForm = () => {
             if (data && data.error && data.error.message) {
               errorMessage = data.error.message;
             }
-            
-            alert(errorMessage)
 
+            alert(errorMessage);
           });
         }
       });
@@ -68,7 +72,8 @@ const AuthForm = () => {
           <input type="password" id="password" ref={password} required />
         </div>
         <div className={classes.actions}>
-          <button>{isLogin ? "Login" : "Create Account"}</button>
+          {!isLoading && <button>{isLogin ? "Login" : "Create Account"}</button>}
+          {isLoading && <p>Sendind request...</p>}
           <button
             type="button"
             className={classes.toggle}
