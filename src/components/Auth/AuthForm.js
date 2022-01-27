@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 
 import classes from "./AuthForm.module.css";
-import { apiKey } from '../../constants';
+import { apiKey } from "../../constants";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -25,27 +25,31 @@ const AuthForm = () => {
 
     if (isLogin) {
     } else {
-      const url =
-        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`;
+      const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`;
 
       fetch(url, {
         method: "POST",
-        headers:{
-          'Content-Type':'application/json'
+        headers: {
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: enteredEmail,
           password: enteredPassword,
           returnSecureToken: true,
         }),
-      }).then(res=>{
-        if(res.ok){
+      }).then((res) => {
+        if (res.ok) {
+        } else {
+          res.json().then((data) => {
+            let errorMessage = "Authentication failed";
 
-        }else{
-          res.json().then(data=>{
-            //show error     
-            console.error(data)     
-          })
+            if (data && data.error && data.error.message) {
+              errorMessage = data.error.message;
+            }
+            
+            alert(errorMessage)
+
+          });
         }
       });
     }
