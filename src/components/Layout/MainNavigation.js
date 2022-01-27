@@ -12,6 +12,9 @@ const MainNavigation = () => {
 
   const logoutHandler = () => {
     authContext.logout();
+    if (authContext.logoutTimer) {
+      clearTimeout(authContext.logoutTimer);
+    }
     history.replace("/");
   };
 
