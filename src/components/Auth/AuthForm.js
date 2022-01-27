@@ -3,6 +3,7 @@ import { useContext, useRef, useState } from "react";
 import classes from "./AuthForm.module.css";
 import { apiKey } from "../../constants";
 import AuthContext from "../../store/auth-context";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -10,6 +11,7 @@ const AuthForm = () => {
   const password = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const authCtx = useContext(AuthContext);
+  const history = useHistory();
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -66,6 +68,7 @@ const AuthForm = () => {
       })
       .then((data) => {
         authCtx.login(data.idToken);
+        history.replace("/");
       })
       .catch((err) => {
         alert(err);

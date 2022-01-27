@@ -2,10 +2,12 @@ import classes from "./ProfileForm.module.css";
 import { apiKey } from "../../constants";
 import { useContext, useRef } from "react";
 import AuthContext from "../../store/auth-context";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const ProfileForm = () => {
   const password = useRef();
   const authCtx = useContext(AuthContext);
+  const history = useHistory();
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -32,7 +34,7 @@ const ProfileForm = () => {
         }
       })
       .then((json) => {
-        console.log(json);
+        history.replace("/");
       })
       .catch((err) => {
         alert(err);
